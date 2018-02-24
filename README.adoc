@@ -1,0 +1,128 @@
+= despeck: remove unwanted stamps or watermarks from scanned images
+
+`despeck` is a Ruby gem that helps you remove unwated stamps or watermarks from
+scanned images/PDFs, primarily prior to OCR.
+
+Its image processing operations are based on libvips via the
+https://github.com/jcupitt/ruby-vips[ruby-vips] Ruby-bindings.
+
+It can be used to:
+
+* detect uniform watermarks from a series of images,
+* output a watermark pattern file (image, mask) that describes a watermark pattern, and
+* remove a specified watermark pattern from input images regardless of the
+  location of the watermark on these images.
+
+Assumptions on input:
+
+* The input may be a single image, or a PDF of multiple pages of images
+* In the case of multiple pages, not all pages may have the watermark
+* The input images are assumed to be purely monochrome text-based.
+* The watermarks are colored and are located in a similar location within all
+  the pages. For example, if the watermark is a GREEN SQUARE PATTERN, for all
+  the pages that contain this mark, despeck will attempt to detect this pattern
+  and remove them
+
+== Quick start
+
+[source,sh]
+----
+gem install despeck
+----
+
+== Functionality
+
+despect has three functions:
+
+. recognize a common watermark from a set of input images. All of the input
+  images for detection should contain at least one of this mark.
+. output a file that specifies a particular watermark pattern (and the color of
+  it)
+. remove a specified mark (from a "watermark pattern file" provided by step 2)
+  from a series of input images. These input images may or may not contain this
+  watermark.
+
+== Usage (library)
+
+TODO: under development.
+
+== Usage (command-line)
+
+=== Detection
+
+The command shall do the following.
+
+1. The command shall take the input of a PDF / image(s)
+2. The command outputs a file that contains the detected watermark(s)
+
+This is the sample help output for `despeck extract`.
+
+[source]
+----
+$ despeck extract -h
+
+Usage:
+  despeck extract [options] <inputfile> <outputfile>
+
+    [-s sensitivity]
+      An integer value from 0 to 100 to indicate sensitivity of the watermark
+      detection algorithm.
+
+    [-w watermark-color-hint-in-RGB]
+      One or more RGB 8-bit values in hexadecimal (0x00 to 0xFF), separated by
+      commas for each RGB channel, to indicate the approximate color of the
+      watermark. 
+    
+      The significant bits (0 to 8) should be indicated after the full
+      color hexadecimal value. Example: "FF,AA,88/6" to indicate that the last 2
+      bits of this color value are to be ignored.
+
+    <inputfile>
+      The input file(s)
+
+    <outputfile>
+      The file to output the watermark image to.
+
+    If multiple watermark candidates are detected, multiple watermark images
+----
+
+
+=== Removal
+
+1. The command shall take the input of a PDF / image(s) and the watermark image
+2. The command outputs a file that does not contain the watermark
+
+Internally, it:
+
+1. Investigates each page and detect which ones has a watermark.
+2. For pages that do not contain the mark, just output it to the output file.
+3. For the pages that contain the watermark, remove the mark and output to the output file.
+4. Output the final PDF that all pages have the watermark removed.
+
+This is the sample help output for `despeck remove`.
+
+[source]
+----
+$ despeck remove -h
+
+Usage:
+  despeck remove [options] <inputfile> <watermarkfile> <outputfile>
+
+    This command removes the watermark specified in <watermarkfile> from
+    <inputfile>, and outputs the resulting image(s) in outputfile.
+
+    [-s sensitivity]
+      An integer value from 0 to 100 to indicate sensitivity of the watermark
+      removal algorithm.
+
+    <inputfile>
+      The input file(s)
+
+    <watermarkfile>
+      The watermark file
+
+    <outputfile>
+      The file to output the resulting images that have the specified watermark
+      removed.
+----
+
