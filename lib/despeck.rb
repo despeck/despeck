@@ -1,5 +1,7 @@
-require "despeck/version"
+# frozen_string_literal: true
 
-module Despeck
-  # Your code goes here...
-end
+require 'clamp'
+require 'vips'
+require 'despeck/version'
+require 'despeck/cli'
+require 'despeck/commands/remove'
