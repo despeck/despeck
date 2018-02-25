@@ -1,6 +1,6 @@
 module Despeck
   module Commands
-    class Remove < Clamp::Command
+    class Version < Clamp::Command
       # option "--loud", :flag, "say it loud"
       # option ["-n", "--iterations"], "N", "say it N times", :default => 1 do |s|
       #   Integer(s)

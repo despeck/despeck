@@ -4,7 +4,7 @@ require 'vips'
 require 'pry'
 require 'tty-progressbar'
 
-image = Vips::Image.new_from_file('samples/red-circle/a.jpg')
+image = Vips::Image.new_from_file('samples/red-circle/01.jpg')
 
 # the colour we search for as a CIELAB coordinate
 # match = [54.64, 61.16, 51.76]
@@ -27,4 +27,4 @@ match = [54.64, 61.16, 51.76]
 distance = image.dE76(image.new_from_image(match))
 image = (distance > 55).ifthenelse([255, 255, 255], image)
 
-image.write_to_file('output/a.jpg')
+image.write_to_file('output/01.jpg')
