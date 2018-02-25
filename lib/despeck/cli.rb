@@ -7,6 +7,6 @@ module Despeck
       exit(0)
     end
 
-    subcommand(%w[remove])
+    subcommand('remove', 'Remove watermark', Despeck::Commands::Remove)
   end
 end

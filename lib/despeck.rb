@@ -2,8 +2,7 @@
 
 require 'clamp'
 require 'vips'
+require 'pry'
 
-require 'clamp'
-
-require_relative 'commands/remove'
-require_relative 'gemboy/cli'
+require_relative 'despeck/commands/remove'
+require_relative 'despeck/cli'
