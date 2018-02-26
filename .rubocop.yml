@@ -1,0 +1,15 @@
+# This project follows the Ribose OSS style guide.
+# https://github.com/riboseinc/oss-guides
+# All project-specific additions and overrides should be specified in this file.
+
+inherit_from:
+  # Thoughtbot's style guide from: https://github.com/thoughtbot/guides
+  - ".rubocop.tb.yml"
+  # Overrides from Ribose
+  - ".rubocop.ribose.yml"
+AllCops:
+  DisplayCopNames: false
+  StyleGuideCopsOnly: false
+  TargetRubyVersion: 2.2
+Rails:
+  Enabled: false
