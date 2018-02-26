@@ -22,6 +22,7 @@ module Despeck
       def execute
         # binding.pry
         image = Vips::Image.new_from_file(input_file)
+        binding.pry
 
         # Preprocess: remove white noise from scanning
         # distance = Vips::Image.sum(((image - [255, 255, 255]) ** 2).bandsplit) ** 0.5
