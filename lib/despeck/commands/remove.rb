@@ -49,7 +49,7 @@ module Despeck
       def grayscale_algorithm(image)
         # TODO: Write a function to add adjust those params from color provided
         #       or from `sensitivity` option
-        image.recomb([1.5, 0.03, 0.03]) 
+        image.recomb([1.2, 0.03, 0.03])
       end
 
       def increase_contrast(bw_image)
