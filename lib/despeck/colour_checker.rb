@@ -2,47 +2,21 @@
 
 module Despeck
   class ColourChecker
-    attr_reader :image, :threshold
+    attr_reader :image, :percent_threshold, :de_threshold
 
-    def initialize(image:, threshold: 30)
+    PERCENT_THRESHOLD = 99
+    DE_THRESHOLD      = 20
+
+    def initialize(image:, percent: PERCENT_THRESHOLD, de: DE_THRESHOLD)
       @image = image
-      @threshold = threshold
+      # TODO: Resize image to make it work faster?
+      @percent_threshold = percent
+      @de_threshold      = de
     end
 
     def black_and_white?
-      black_and_white_pixels.count == histogram.count
-      # TODO: Check if anything else but BW is present on the image
-    end
-
-    def primary_colours
-      histogram - black_and_white_pixels
-      # TODO: Detect watermark colour
-    end
-
-    private
-
-    def black_and_white_pixels
-      @black_and_white_pixels ||=
-        histogram.select { |pxl| black_or_white?(pxl) }
-    end
-
-    def histogram
-      hist = image.hist_find_ndim
-      Vips::Image
-        .new_from_buffer(hist.jpegsave_buffer(Q: 99), '')
-        .to_a
-        .flatten(1)
-    end
-
-    def black_or_white?(rgb_pixel)
-      average = rgb_pixel.reduce(:+) / rgb_pixel.count
-      min = average - threshold
-      max = average + threshold
-      rgb_pixel.all? { |ptr| min <= ptr && ptr <= max }
-    end
-
-    def bluish?(rgb_pixel)
-      
+      dE = image.colourspace('lch')[1].cast('uchar').percent(percent_threshold)
+      dE <= de_threshold
     end
   end
 end
