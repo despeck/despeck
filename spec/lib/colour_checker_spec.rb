@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 RSpec.describe Despeck::ColourChecker do
   subject { described_class.new(image: image) }
 

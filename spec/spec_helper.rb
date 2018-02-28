@@ -16,5 +16,6 @@ RSpec.configure do |config|
 end
 
 def read_image(filename)
-  Vips::Image.new_from_file("#{SPEC_ROOT}/fixtures/#{filename}")
+  path = filename.include?('/') ? filename : "#{SPEC_ROOT}/fixtures/#{filename}"
+  Vips::Image.new_from_file(path)
 end
