@@ -11,32 +11,45 @@ module Despeck
       @add_black       = options.fetch(:add_black, true)
       @watermark_color = options.fetch(:watermark_color, nil)
       @resize          = options.fetch(:resize, 0.1)
-      @sensitivity     = options.fetch(:sensitivity)
+      @sensitivity     = options.fetch(:sensitivity, 100)
 
       Despeck.logger.debug "Sensitivity: #{sensitivity}"
-      Despeck.logger.debug "Contrast improvement: #{!!add_contrast}"
-      Despeck.logger.debug "Black level improvement: #{!!add_black}"
+      Despeck.logger.debug "Contrast improvement: #{add_contrast}"
+      Despeck.logger.debug "Black level improvement: #{add_black}"
     end
 
     def remove_watermark(image)
       output_image = nil
-      time = Benchmark.realtime do
-        if ColourChecker.new(image: image, resize: resize).black_and_white?
-          break Despeck.logger.debug('Watermark not detected.')
+      time =
+        Benchmark.realtime do
+          output_image = __remove_watermark__(image)
         end
-
-        wm_color = watermark_color || detect_watermark_color(image)
-        Despeck.logger.debug "Watermark colour channel detected: #{wm_color}"
-        output_image = grayscale_algorithm(image, wm_color)
-        output_image = increase_contrast(output_image)       if add_contrast
-        output_image = apply_black_improvement(output_image) if add_black
-      end
       Despeck.logger.debug "Time taken: #{time} seconds"
 
       output_image
     end
 
     private
+
+    def __remove_watermark__(image)
+      return if no_watermark?(image)
+
+      wm_color = watermark_color || detect_watermark_color(image)
+      Despeck.logger.debug "Watermark colour channel detected: #{wm_color}"
+      output_image = grayscale_algorithm(image, wm_color)
+      output_image = increase_contrast(output_image)       if add_contrast
+      output_image = apply_black_improvement(output_image) if add_black
+      output_image
+    end
+
+    def no_watermark?(image)
+      if ColourChecker.new(image: image, resize: resize).black_and_white?
+        Despeck.logger.debug('Watermark not detected.')
+        return true
+      end
+
+      false
+    end
 
     def detect_watermark_color(image)
       Despeck::DominantColor.dominant_color(image)
@@ -61,10 +74,11 @@ module Despeck
       apply_sentivity(defaults)
     end
 
+    # rubocop:disable Metrics/AbcSize
     def apply_sentivity(rgb)
       max = rgb.max
       res = rgb.map do |value|
-        if value == rgb.max
+        if value == max
           value * (sensitivity.to_f / 100)
         else
           value / (sensitivity.to_f / 100)
@@ -75,6 +89,7 @@ module Despeck
 
       res
     end
+    # rubocop:enable Metrics/AbcSize
 
     def increase_contrast(bw_image)
       bw_image.colourspace('lch') * [1, 100, 100] + [0, 0, 500]

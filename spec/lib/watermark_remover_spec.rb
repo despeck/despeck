@@ -1,50 +1,57 @@
 # frozen_string_literal: true
 
 RSpec.describe Despeck::WatermarkRemover do
-  let(:no_contrast)     { true }
-  let(:no_black)        { true }
+  let(:add_contrast)    { false }
+  let(:add_black)       { false }
   let(:watermark_color) { nil }
-  let(:output_file)     { "#{SPEC_ROOT}/tmp/output.jpg" }
-  let(:output_image)    { read_image(output_file) }
-  subject do
+  let(:output_image) do
     described_class.new(
-      no_contrast:      no_contrast,
-      no_black:         no_black,
-      watermark_color:  watermark_color
-    ).remove_watermark(input_file, output_file)
+      add_contrast:    add_contrast,
+      add_black:       add_black,
+      watermark_color: watermark_color
+    ).remove_watermark(input_image)
   end
 
   before(:each) { subject }
-  after(:each) { FileUtils.rm(output_file) }
 
   shared_examples 'watermark remover' do
+    let(:params) { { image: output_image, resize: 0.1 } }
+
     it 'removes watermark correctly & leaves only BW scan' do
-      expect(Despeck::ColourChecker.new(image: output_image).black_and_white?)
+      expect(Despeck::ColourChecker.new(params).black_and_white?)
         .to eq true
     end
   end
 
   context 'for red watermark' do
-    let(:input_file) { "#{SPEC_ROOT}/fixtures/red_watermark.jpg" }
+    let(:input_image) { read_image('red_watermark.jpg') }
 
     it_behaves_like 'watermark remover'
   end
 
   context 'for green watermark' do
-    let(:input_file) { "#{SPEC_ROOT}/fixtures/green_watermark.jpg" }
+    let(:input_image) { read_image('green_watermark.jpg') }
 
     it_behaves_like 'watermark remover'
   end
 
   context 'for purple watermark' do
-    let(:input_file) { "#{SPEC_ROOT}/fixtures/purple_watermark.jpg" }
+    let(:input_image) { read_image('purple_watermark.jpg') }
 
     it_behaves_like 'watermark remover'
   end
 
   context 'for yellow watermark' do
-    let(:input_file) { "#{SPEC_ROOT}/fixtures/yellow_watermark.jpg" }
+    let(:input_image) { read_image('yellow_watermark.jpg') }
 
     it_behaves_like 'watermark remover'
+  end
+
+  context 'for image without watermark' do
+    let(:input_image) { read_image('bw.jpg') }
+
+    it 'returns no image' do
+      expect(output_image).to be_nil
+    end
   end
 end

@@ -2,21 +2,24 @@
 
 module Despeck
   module Commands
+    # Subcommand that removes watermarks from images & PDFs
     class Remove < Clamp::Command
-      option ['-s', '--sensitivity'],
+      option(['-s', '--sensitivity'],
              'SENSITIVITY',
-             'Sensitivity of algorithm, from 0 to 100',
-             default: 100 do |s|
+             'Sensitivity of algorithm, defaults to 100',
+             default: 100) do |s|
                Integer(s)
              end
 
       option ['--add-contrast'],
              :flag,
-             'Improve contrast of the output image'
+             'Improve contrast of the output image',
+             default: false
 
       option ['--add-black'],
              :flag,
-             'Replace grayish pixels with true black'
+             'Replace grayish pixels with true black',
+             default: false
 
       option ['--debug'], :flag, 'Show debug information'
 
@@ -33,16 +36,17 @@ module Despeck
       def execute
         Despeck.apply_logger_level(debug?)
 
-        wr = WatermarkRemover.new(
-              add_contrast:    add_contrast?,
-              add_black:       add_black?,
-              sensitivity:     sensitivity,
-              watermark_color: color
-            )
+        wr =
+          WatermarkRemover.new(
+            add_contrast:    add_contrast?,
+            add_black:       add_black?,
+            sensitivity:     sensitivity,
+            watermark_color: color
+          )
         input_image = Vips::Image.new_from_file(input_file)
 
         output_image = wr.remove_watermark(input_image)
-        output_image.write_to_file(output_file) if output_image
+        output_image&.write_to_file(output_file)
       end
     end
   end
