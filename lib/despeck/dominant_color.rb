@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 module Despeck
+  # Finds primary watermark colour (red, green, or blue)
   module DominantColor
     class << self
       def dominant_color(image)
@@ -12,10 +13,23 @@ module Despeck
 
       def non_black_colors(image)
         pixels = image.resize(0.02).to_a
-        pixels.flatten(1).select { |p| !black_and_white?(p) }
+        pixels.flatten(1).reject { |p| black_and_white?(p) }
       end
 
       def primary_color(colors)
+        red, green, blue = calculate_channels_total(colors)
+
+        case [red, green, blue].max
+        when red
+          'FF0000'
+        when green
+          '00FF00'
+        when blue
+          '0000FF'
+        end
+      end
+
+      def calculate_channels_total(colors)
         red, green, blue = 0, 0, 0
         colors.each do |pixel|
           r, g, b = pixel
@@ -29,14 +43,7 @@ module Despeck
           end
         end
 
-        case [red, green, blue].max
-        when red
-          'FF0000'
-        when green
-          '00FF00'
-        when blue
-          '0000FF'
-        end
+        [red, green, blue]
       end
 
       def black_and_white?(pixel)
@@ -48,4 +55,3 @@ module Despeck
     end
   end
 end
-  

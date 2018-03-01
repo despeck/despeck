@@ -1,27 +1,39 @@
 # frozen_string_literal: true
 
 module Despeck
+  # Takes an image and removes watermark
   class WatermarkRemover
-    attr_reader :no_contrast, :no_improve_black, :watermark_color
+    attr_reader :add_contrast, :add_black,
+                :watermark_color, :resize, :sensitivity
 
-    def initialize(no_contrast: false,
-                   no_improve_black: false,
-                   watermark_color: nil)
-      @no_contrast      = no_contrast
-      @no_improve_black = no_improve_black
-      @watermark_color  = watermark_color
+    def initialize(options = {})
+      @add_contrast    = options.fetch(:add_contrast, true)
+      @add_black       = options.fetch(:add_black, true)
+      @watermark_color = options.fetch(:watermark_color, nil)
+      @resize          = options.fetch(:resize, 0.1)
+      @sensitivity     = options.fetch(:sensitivity)
+
+      Despeck.logger.debug "Sensitivity: #{sensitivity}"
+      Despeck.logger.debug "Contrast improvement: #{!!add_contrast}"
+      Despeck.logger.debug "Black level improvement: #{!!add_black}"
     end
 
-    def remove_watermark(input_file, output_file)
-      image = Vips::Image.new_from_file(input_file)
-      return if ColourChecker.new(image: image).black_and_white?
+    def remove_watermark(image)
+      output_image = nil
+      time = Benchmark.realtime do
+        if ColourChecker.new(image: image, resize: resize).black_and_white?
+          break Despeck.logger.debug('Watermark not detected.')
+        end
 
-      wm_color = watermark_color || detect_watermark_color(image)
-      image = grayscale_algorithm(image, wm_color)
-      image = increase_contrast(image)       unless no_contrast
-      image = apply_black_improvement(image) unless no_improve_black
-    ensure
-      image.write_to_file(output_file)
+        wm_color = watermark_color || detect_watermark_color(image)
+        Despeck.logger.debug "Watermark colour channel detected: #{wm_color}"
+        output_image = grayscale_algorithm(image, wm_color)
+        output_image = increase_contrast(output_image)       if add_contrast
+        output_image = apply_black_improvement(output_image) if add_black
+      end
+      Despeck.logger.debug "Time taken: #{time} seconds"
+
+      output_image
     end
 
     private
@@ -36,14 +48,32 @@ module Despeck
 
     def greyscale_params(pr_color)
       r, g, b = hex_to_rgb(pr_color)
-      case [r, g, b].max
-      when r
-        [1.2, 0.03, 0.03]
-      when g
-        [0.03, 1.4, 0.03]
-      when b
-        [0.03, 0.03, 1.4]
+      defaults =
+        case [r, g, b].max
+        when r
+          [1.2, 0.03, 0.03]
+        when g
+          [0.03, 1.4, 0.03]
+        when b
+          [0.03, 0.03, 1.4]
+        end
+
+      apply_sentivity(defaults)
+    end
+
+    def apply_sentivity(rgb)
+      max = rgb.max
+      res = rgb.map do |value|
+        if value == rgb.max
+          value * (sensitivity.to_f / 100)
+        else
+          value / (sensitivity.to_f / 100)
+        end
       end
+      Despeck.logger.debug "Remove channel value: #{res.max}"
+      Despeck.logger.debug "Untouched channels value: #{res.min}"
+
+      res
     end
 
     def increase_contrast(bw_image)

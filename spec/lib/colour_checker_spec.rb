@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 RSpec.describe Despeck::ColourChecker do
-  subject { described_class.new(image: image) }
+  subject { described_class.new(image: image, resize: 0.1) }
 
   describe '#black_and_white?' do
     context 'when image is black and white only' do

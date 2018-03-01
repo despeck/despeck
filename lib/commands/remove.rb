@@ -1,26 +1,24 @@
 # frozen_string_literal: true
 
-# To read: https://github.com/jcupitt/libvips/issues/59
-
 module Despeck
   module Commands
     class Remove < Clamp::Command
       option ['-s', '--sensitivity'],
              'SENSITIVITY',
              'Sensitivity of algorithm, from 0 to 100',
-             default: 55 do |s|
+             default: 100 do |s|
                Integer(s)
              end
 
-      option ['--no-contrast'],
-             'no_contrast',
-             'Do not apply contrast to output image',
-             flag: true
+      option ['--add-contrast'],
+             :flag,
+             'Improve contrast of the output image'
 
-      option ['--no-improve-black'],
-             'no_improve_black',
-             'Do not replace grayish pixels with true black',
-             flag: true
+      option ['--add-black'],
+             :flag,
+             'Replace grayish pixels with true black'
+
+      option ['--debug'], :flag, 'Show debug information'
 
       option ['-c', '--color'],
              'COLOR',
@@ -33,12 +31,18 @@ module Despeck
                 attribute_name: :output_file
 
       def execute
+        Despeck.apply_logger_level(debug?)
+
         wr = WatermarkRemover.new(
-              no_contrast:      no_contrast,
-              no_improve_black: no_improve_black,
-              watermark_color:  color
+              add_contrast:    add_contrast?,
+              add_black:       add_black?,
+              sensitivity:     sensitivity,
+              watermark_color: color
             )
-        wr.remove_watermark(input_file, output_file)
+        input_image = Vips::Image.new_from_file(input_file)
+
+        output_image = wr.remove_watermark(input_image)
+        output_image.write_to_file(output_file) if output_image
       end
     end
   end

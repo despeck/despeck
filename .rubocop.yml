@@ -1,0 +1,10 @@
+Metrics/BlockLength:
+  ExcludedMethods:
+    - 'context'
+    - 'describe'
+
+Metrics/MethodLength:
+  Max: 15
+
+Style/ParallelAssignment:
+  Enabled: false

@@ -10,8 +10,10 @@ Gem::Specification.new do |spec|
   spec.authors       = ['Ribose Inc.']
   spec.email         = ['open.source@ribose.com']
 
-  spec.summary       = "Removes stamps and watermarks from scanned images for OCR, 'removes specks'"
-  spec.description   = "Removes stamps and watermarks from scanned images for OCR, 'removes specks'"
+  spec.summary       = 'Removes stamps and watermarks '\
+                       "from scanned images for OCR, 'removes specks'"
+  spec.description   = 'Removes stamps and watermarks '\
+                       "from scanned images for OCR, 'removes specks'"
 
   spec.homepage      = 'https://github.com/riboseinc/despeck'
   spec.license       = 'MIT'
@@ -27,7 +29,6 @@ Gem::Specification.new do |spec|
 
   spec.add_dependency 'clamp', '~> 1.2'
   spec.add_dependency 'ruby-vips', '~> 2.0'
-  spec.add_dependency 'tty-progressbar', '~> 0.14'
 
   spec.add_development_dependency 'bundler', '~> 1.16'
   spec.add_development_dependency 'pry'
