@@ -36,6 +36,21 @@ module Despeck
       def execute
         Despeck.apply_logger_level(debug?)
 
+        if input_file.end_with?('.pdf')
+          images =
+            PdfTools.pdf_to_images(input_file).map do |image|
+              remove_watermark_from_image(image, nil)
+            end
+          # binding.pry
+          PdfTools.images_to_pdf(images, output_file)
+        else
+          remove_watermark_from_image(input_file, output_file)
+        end
+      end
+
+      private
+
+      def remove_watermark_from_image(input, output)
         wr =
           WatermarkRemover.new(
             add_contrast:    add_contrast?,
@@ -43,10 +58,18 @@ module Despeck
             sensitivity:     sensitivity,
             watermark_color: color
           )
-        input_image = Vips::Image.new_from_file(input_file)
+
+        input_image =
+          if input.is_a?(String)
+            Vips::Image.new_from_file(input)
+          else
+            input
+          end
 
         output_image = wr.remove_watermark(input_image)
-        output_image&.write_to_file(output_file)
+        return output_image unless output
+
+        output_image&.write_to_file(output)
       end
     end
   end
