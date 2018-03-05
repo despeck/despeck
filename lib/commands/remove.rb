@@ -41,7 +41,6 @@ module Despeck
             PdfTools.pdf_to_images(input_file).map do |image|
               remove_watermark_from_image(image, nil)
             end
-          # binding.pry
           PdfTools.images_to_pdf(images, output_file)
         else
           remove_watermark_from_image(input_file, output_file)

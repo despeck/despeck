@@ -32,7 +32,10 @@ module Despeck
     private
 
     def __remove_watermark__(image)
-      return if no_watermark?(image)
+      if no_watermark?(image) && !watermark_color
+        Despeck.logger.error "Can't find watermark, skipping."
+        return
+      end
 
       wm_color = watermark_color || detect_watermark_color(image)
       Despeck.logger.debug "Watermark colour channel detected: #{wm_color}"
