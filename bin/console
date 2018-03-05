@@ -1,7 +1,9 @@
+# frozen_string_literal: true
+
 #!/usr/bin/env ruby
 
-require "bundler/setup"
-require "despeck"
+require 'bundler/setup'
+require 'despeck'
 
 # You can add fixtures and/or initialization code here to make experimenting
 # with your gem easier. You can also use a different console, if you like.
@@ -10,5 +12,5 @@ require "despeck"
 # require "pry"
 # Pry.start
 
-require "irb"
+require 'irb'
 IRB.start(__FILE__)

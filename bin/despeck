@@ -1,0 +1,8 @@
+# frozen_string_literal: true
+
+#!/usr/bin/env ruby
+
+require 'bundler/setup'
+require 'despeck'
+
+Despeck::CLI.run
