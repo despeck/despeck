@@ -2,7 +2,6 @@
 
 require 'clamp'
 require 'benchmark'
-require 'fastimage'
 require 'pdf-reader'
 require 'prawn'
 require 'pry'

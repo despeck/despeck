@@ -3,8 +3,6 @@
 module Despeck
   module PdfTools
     class << self
-      # include Prawn::Measurements
-
       # Increase to improve image quality, decrease to improve performance
       DEFAULT_DPI = 300
 
@@ -17,8 +15,7 @@ module Despeck
       end
 
       def images_to_pdf(images, pdf_path)
-        doc = Prawn::Document.new()
-
+        doc = nil
         images.each do |pic|
           tempfile = Tempfile.new(['despeck', '.jpg'])
           pic.write_to_file(tempfile.path)
@@ -26,7 +23,11 @@ module Despeck
           page_size = pic.size.map{|p| p + in2pt(1) }
           layout = page_size.max == page_size.first ? :landscape : :portrait
 
-          doc.start_new_page(size: page_size, layout: layout)
+          if doc
+            doc.start_new_page(size: page_size, layout: layout)
+          else
+            doc = Prawn::Document.new(page_size: page_size, page_layout: layout)
+          end
 
           doc.image(tempfile.path, position: :left,
                                vposition: :top,
