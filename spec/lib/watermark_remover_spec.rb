@@ -54,4 +54,14 @@ RSpec.describe Despeck::WatermarkRemover do
       expect(output_image).to be_nil
     end
   end
+
+  context 'when watermark_color provided' do
+    let(:input_image) { read_image('extra_small_blue_watermark.png') }
+    let(:watermark_color) { '0000FF' }
+
+    it 'does not check presence of watermark' do
+      expect(Despeck::ColourChecker).not_to receive(:new)
+      output_image
+    end
+  end
 end

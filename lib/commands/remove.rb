@@ -13,13 +13,13 @@ module Despeck
 
       option ['--add-contrast'],
              :flag,
-             'Improve contrast of the output image',
-             default: false
+             'Improve contrast of the output image'
 
-      option ['--add-black'],
-             :flag,
-             'Replace grayish pixels with true black',
-             default: false
+      option(['--black-const'],
+             'BLACK_CONSTANT',
+             'Constant to improve black (-100) or white (100). '\
+               '0 - to do nothing.',
+             default: -100) { |s| Integer(s) }
 
       option ['--debug'], :flag, 'Show debug information'
 
@@ -53,17 +53,13 @@ module Despeck
         wr =
           WatermarkRemover.new(
             add_contrast:    add_contrast?,
-            add_black:       add_black?,
+            black_const:     black_const,
             sensitivity:     sensitivity,
             watermark_color: color
           )
 
         input_image =
-          if input.is_a?(String)
-            Vips::Image.new_from_file(input)
-          else
-            input
-          end
+          input.is_a?(String) ? Vips::Image.new_from_file(input) : input
 
         output_image = wr.remove_watermark(input_image)
         return output_image unless output

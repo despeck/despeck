@@ -3,19 +3,19 @@
 module Despeck
   # Takes an image and removes watermark
   class WatermarkRemover
-    attr_reader :add_contrast, :add_black,
+    attr_reader :add_contrast, :black_const,
                 :watermark_color, :resize, :sensitivity
 
     def initialize(options = {})
       @add_contrast    = options.fetch(:add_contrast, true)
-      @add_black       = options.fetch(:add_black, true)
+      @black_const     = options.fetch(:black_const, -110)
       @watermark_color = options.fetch(:watermark_color, nil)
       @resize          = options.fetch(:resize, 0.1)
       @sensitivity     = options.fetch(:sensitivity, 100)
 
       Despeck.logger.debug "Sensitivity: #{sensitivity}"
       Despeck.logger.debug "Contrast improvement: #{add_contrast}"
-      Despeck.logger.debug "Black level improvement: #{add_black}"
+      Despeck.logger.debug "Black level improvement: #{black_const}"
     end
 
     def remove_watermark(image)
@@ -32,22 +32,22 @@ module Despeck
     private
 
     def __remove_watermark__(image)
-      if no_watermark?(image) && !watermark_color
-        Despeck.logger.error "Can't find watermark, skipping."
-        return
-      end
+      return if no_watermark?(image)
 
       wm_color = watermark_color || detect_watermark_color(image)
       Despeck.logger.debug "Watermark colour channel detected: #{wm_color}"
       output_image = grayscale_algorithm(image, wm_color)
-      output_image = increase_contrast(output_image)       if add_contrast
-      output_image = apply_black_improvement(output_image) if add_black
+      output_image = increase_contrast(output_image) if add_contrast
+      output_image = apply_black_improvement(output_image)
+      output_image = apply_grey_to_black(output_image) if wm_color != 'FF0000'
       output_image
     end
 
     def no_watermark?(image)
+      return false if watermark_color
+
       if ColourChecker.new(image: image, resize: resize).black_and_white?
-        Despeck.logger.debug('Watermark not detected.')
+        Despeck.logger.error "Can't find watermark, skipping."
         return true
       end
 
@@ -101,6 +101,10 @@ module Despeck
     end
 
     def apply_black_improvement(image)
+      image.colourspace('b-w').linear(1, black_const)
+    end
+
+    def apply_grey_to_black(image)
       match = [0, 0, 0]
       distance = image.dE76(image.new_from_image(match))
       (distance < 80).ifthenelse([0, 0, 0], image)

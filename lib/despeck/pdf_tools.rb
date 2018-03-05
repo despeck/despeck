@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 module Despeck
+  # Read/Write PDF files
   module PdfTools
     class << self
       # Increase to improve image quality, decrease to improve performance
@@ -16,22 +17,15 @@ module Despeck
 
       def images_to_pdf(images, pdf_path)
         doc = nil
-        images.each do |pic|
-          tempfile = Tempfile.new(['despeck', '.jpg'])
-          pic.write_to_file(tempfile.path)
 
-          page_size = pic.size.map{|p| p + in2pt(1) }
-          layout = page_size.max == page_size.first ? :landscape : :portrait
-
+        for_each_image_file(images) do |path, page_size, pic_size, layout|
           if doc
             doc.start_new_page(size: page_size, layout: layout)
           else
             doc = Prawn::Document.new(page_size: page_size, page_layout: layout)
           end
 
-          doc.image(tempfile.path, position: :left,
-                               vposition: :top,
-                               fit: pic.size)
+          doc.image(path, position: :left, vposition: :top, fit: pic_size)
         end
 
         doc.render_file(pdf_path)
@@ -45,6 +39,23 @@ module Despeck
         pages_count(pdf_path).times do |page_no|
           yield page_no
         end
+      end
+
+      private
+
+      def for_each_image_file(images)
+        images.each do |pic|
+          tempfile = Tempfile.new(['despeck', '.jpg'])
+          pic.write_to_file(tempfile.path)
+
+          page_size = pdf_size(pic)
+          layout = page_size.max == page_size.first ? :landscape : :portrait
+          yield tempfile.path, page_size, pic.size, layout
+        end
+      end
+
+      def pdf_size(image)
+        image.size.map { |p| p + in2pt(1) }
       end
     end
   end

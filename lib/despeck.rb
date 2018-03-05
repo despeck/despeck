@@ -16,4 +16,5 @@ require_relative 'despeck/watermark_remover'
 require_relative 'despeck/pdf_tools'
 require_relative 'despeck/cli'
 
+# Prawn helper method are needed to calculate proper pages size
 include Prawn::Measurements
