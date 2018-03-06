@@ -1,0 +1,11 @@
+language: ruby
+dist: trusty
+
+rvm:
+  - 2.4.3
+  - 2.5.0
+  - ruby-head
+
+script:
+  - bundle exec rspec
+  - bundle exec rubocop
