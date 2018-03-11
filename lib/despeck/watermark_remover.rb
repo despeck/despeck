@@ -37,8 +37,9 @@ module Despeck
       wm_color = watermark_color || detect_watermark_color(image)
       Despeck.logger.debug "Watermark colour channel detected: #{wm_color}"
       output_image = grayscale_algorithm(image, wm_color)
-      output_image = increase_contrast(output_image) if add_contrast
-      output_image = apply_black_improvement(output_image)
+      # output_image = increase_contrast(output_image) if add_contrast
+      # output_image = apply_black_improvement(output_image)
+      output_image = apply_dilate(output_image)
       output_image = apply_grey_to_black(output_image) if wm_color != 'FF0000'
       output_image
     end
@@ -104,6 +105,20 @@ module Despeck
       image.colourspace('b-w').linear(1, black_const)
     end
 
+    def apply_dilate(image)
+      # image.dilate([[128, 255, 128], [255, 0, 255], [128, 255, 128]])
+      image
+        .colourspace('b-w')
+        .dilate([[128, 128, 128], [128, 128, 128], [128, 128, 128]])
+      # dil = Array.new(5, Array.new(5, 1))
+      # image.dilate(dil)
+      # binding.pry
+      # puts 'done'
+      # image
+    end
+# 128 255 128
+# 255 255 255
+# 128 255 128
     def apply_grey_to_black(image)
       match = [0, 0, 0]
       distance = image.dE76(image.new_from_image(match))
