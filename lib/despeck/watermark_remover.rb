@@ -56,6 +56,7 @@ module Despeck
 
     def detect_watermark_color(image)
       Despeck::DominantColor.dominant_color(image)
+      # Despeck::DominantColorV2.dominant_color(image)
     end
 
     def grayscale_algorithm(image, pr_color)
