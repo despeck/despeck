@@ -11,7 +11,7 @@ module Despeck
       @black_const     = options.fetch(:black_const, -110)
       @watermark_color = options.fetch(:watermark_color, nil)
       @resize          = options.fetch(:resize, 0.1)
-      @sensitivity     = options.fetch(:sensitivity, 100)
+      @sensitivity     = options.fetch(:sensitivity, 160)
 
       Despeck.logger.debug "Sensitivity: #{sensitivity}"
       Despeck.logger.debug "Contrast improvement: #{add_contrast}"
@@ -56,6 +56,7 @@ module Despeck
 
     def detect_watermark_color(image)
       Despeck::DominantColor.dominant_color(image)
+      # Despeck::DominantColorV2.dominant_color(image)
     end
 
     def grayscale_algorithm(image, pr_color)
