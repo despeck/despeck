@@ -22,7 +22,16 @@ module Despeck
       output_image = nil
       time =
         Benchmark.realtime do
-          output_image = __remove_watermark__(image)
+          watermark, no_watermark, mask =
+            WatermarkMask.new(image).find_masks!
+          output_image = __remove_watermark__(watermark)
+          if output_image
+            no_watermark = no_watermark.colourspace('b-w').bandjoin(mask.invert)
+            output_image =
+              output_image
+              .bandjoin(mask)
+              .composite(no_watermark, 'over')
+          end
         end
       Despeck.logger.debug "Time taken: #{time} seconds"
 

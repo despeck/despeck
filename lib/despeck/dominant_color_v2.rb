@@ -32,7 +32,6 @@ module Despeck
 
       def average(pixels, channel)
         total = pixels.map { |i| i[channel] }.reduce(:+).to_f
-        puts "Average (#{channel}): #{total} / #{pixels.count}"
         (total / pixels.count.to_f).to_i
       end
     end
