@@ -7,12 +7,7 @@ module Despeck
                 :watermark_color, :resize, :sensitivity, :accurate
 
     def initialize(options = {})
-      @add_contrast    = options.fetch(:add_contrast, true)
-      @black_const     = options.fetch(:black_const, -110)
-      @watermark_color = options.fetch(:watermark_color, nil)
-      @resize          = options.fetch(:resize, 0.1)
-      @sensitivity     = options.fetch(:sensitivity, 160)
-      @accurate        = options.fetch(:accurate, false)
+      apply_options!(options)
 
       Despeck.logger.debug "Sensitivity: #{sensitivity}"
       Despeck.logger.debug "Contrast improvement: #{add_contrast}"
@@ -37,6 +32,15 @@ module Despeck
 
     private
 
+    def apply_options!(options)
+      @add_contrast    = options.fetch(:add_contrast, true)
+      @black_const     = options.fetch(:black_const, -110)
+      @watermark_color = options.fetch(:watermark_color, nil)
+      @resize          = options.fetch(:resize, 0.1)
+      @sensitivity     = options.fetch(:sensitivity, 160)
+      @accurate        = options.fetch(:accurate, false)
+    end
+
     # keep the rest of the image untouched
     def __remove_watermark_only__(image)
       watermark, no_watermark, mask =
@@ -45,8 +49,8 @@ module Despeck
       return unless output_image
 
       no_watermark = no_watermark.colourspace('b-w').bandjoin(mask.invert)
-      output_image =
-        output_image
+
+      output_image
         .bandjoin(mask)
         .composite(no_watermark, 'over')
     end
