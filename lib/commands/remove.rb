@@ -28,6 +28,11 @@ module Despeck
              'Watermark primary HEX colour (example: FEFE7E)',
              required: false
 
+      option ['--accurate'],
+             :flag,
+             'Change only the area with watermark, '\
+             'preserving the rest of the image untouched'
+
       parameter 'input_file', 'Input file - either PDF or image',
                 attribute_name: :input_file
       parameter 'output_file', 'Output file (same format as input)',
@@ -53,6 +58,7 @@ module Despeck
         wr =
           WatermarkRemover.new(
             add_contrast:    add_contrast?,
+            accurate:        accurate?,
             black_const:     black_const,
             sensitivity:     sensitivity,
             watermark_color: color

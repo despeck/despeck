@@ -4,7 +4,7 @@ module Despeck
   # Takes an image and removes watermark
   class WatermarkRemover
     attr_reader :add_contrast, :black_const,
-                :watermark_color, :resize, :sensitivity
+                :watermark_color, :resize, :sensitivity, :accurate
 
     def initialize(options = {})
       @add_contrast    = options.fetch(:add_contrast, true)
@@ -12,6 +12,7 @@ module Despeck
       @watermark_color = options.fetch(:watermark_color, nil)
       @resize          = options.fetch(:resize, 0.1)
       @sensitivity     = options.fetch(:sensitivity, 160)
+      @accurate        = options.fetch(:accurate, false)
 
       Despeck.logger.debug "Sensitivity: #{sensitivity}"
       Despeck.logger.debug "Contrast improvement: #{add_contrast}"
@@ -22,16 +23,12 @@ module Despeck
       output_image = nil
       time =
         Benchmark.realtime do
-          watermark, no_watermark, mask =
-            WatermarkMask.new(image).find_masks!
-          output_image = __remove_watermark__(watermark)
-          if output_image
-            no_watermark = no_watermark.colourspace('b-w').bandjoin(mask.invert)
-            output_image =
-              output_image
-              .bandjoin(mask)
-              .composite(no_watermark, 'over')
-          end
+          output_image =
+            if accurate
+              __remove_watermark_only__(image)
+            else
+              __remove_watermark__(image)
+            end
         end
       Despeck.logger.debug "Time taken: #{time} seconds"
 
@@ -39,6 +36,20 @@ module Despeck
     end
 
     private
+
+    # keep the rest of the image untouched
+    def __remove_watermark_only__(image)
+      watermark, no_watermark, mask =
+        WatermarkMask.new(image).find_masks!
+      output_image = __remove_watermark__(watermark)
+      return unless output_image
+
+      no_watermark = no_watermark.colourspace('b-w').bandjoin(mask.invert)
+      output_image =
+        output_image
+        .bandjoin(mask)
+        .composite(no_watermark, 'over')
+    end
 
     def __remove_watermark__(image)
       return if no_watermark?(image)
