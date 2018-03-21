@@ -6,7 +6,7 @@ module Despeck
     class Remove < Clamp::Command
       option(['-s', '--sensitivity'],
              'SENSITIVITY',
-             'Sensitivity of algorithm, defaults to 100',
+             'Sensitivity of algorithm, defaults to 160',
              default: 160) do |s|
                Integer(s)
              end
