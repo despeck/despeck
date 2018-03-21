@@ -69,6 +69,7 @@ $ despec remove --color 00FF00 --sensitivity 120 --black-const -60 --add-contras
 * `--sensitivity 120` - increases sensitivity (if with default 100 watermark is still visible).
 * `--black-const -60` - by default, Despeck tries to improve text quality by increasing black by -110. This may be too much for you, so you can reduce that number.
 * `--add-contrast` - disabled by default, increases output image's contrast.
+* `--accurate` - disabled by default. Applies filters to the area with watermark only, preserving the rest of the image untouched.
 
 ## Usage
 

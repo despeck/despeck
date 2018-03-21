@@ -6,8 +6,8 @@ module Despeck
     class Remove < Clamp::Command
       option(['-s', '--sensitivity'],
              'SENSITIVITY',
-             'Sensitivity of algorithm, defaults to 100',
-             default: 100) do |s|
+             'Sensitivity of algorithm, defaults to 160',
+             default: 160) do |s|
                Integer(s)
              end
 
@@ -27,6 +27,11 @@ module Despeck
              'COLOR',
              'Watermark primary HEX colour (example: FEFE7E)',
              required: false
+
+      option ['--accurate'],
+             :flag,
+             'Change only the area with watermark, '\
+             'preserving the rest of the image untouched'
 
       parameter 'input_file', 'Input file - either PDF or image',
                 attribute_name: :input_file
@@ -53,6 +58,7 @@ module Despeck
         wr =
           WatermarkRemover.new(
             add_contrast:    add_contrast?,
+            accurate:        accurate?,
             black_const:     black_const,
             sensitivity:     sensitivity,
             watermark_color: color
