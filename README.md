@@ -43,6 +43,16 @@ gem 'despeck'
 
 and then run `bundle install`
 
+## OCR
+
+To be able to extract text via `despeck ocr` command, you'll need to install:
+
+* Tesseract (3.x)
+* ImageMagick (6.x)
+* Desired languages
+
+Installation instruction can be found here: [OCR tools installation guide](./OCR.md)
+
 ## Usage (Command Line)
 
 Getting actual help:
