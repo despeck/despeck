@@ -61,7 +61,10 @@ Getting actual help:
 # To show general help
 despeck -h
 despeck remove -h
+despeck ocr -h
 ```
+
+### Remove watermark
 
 To remove watermark:
 
@@ -75,11 +78,29 @@ With the command above, Despeck will try to find the watermark colour, and apply
 $ despec remove --color 00FF00 --sensitivity 120 --black-const -60 --add-contrast /path/to/input.pdf /path/to/output.pdf
 ```
 
+A lit of available options:
+
 * `--color 00FF00` - to say watermark is ~ green.
 * `--sensitivity 120` - increases sensitivity (if with default 100 watermark is still visible).
 * `--black-const -60` - by default, Despeck tries to improve text quality by increasing black by -110. This may be too much for you, so you can reduce that number.
 * `--add-contrast` - disabled by default, increases output image's contrast.
 * `--accurate` - disabled by default. Applies filters to the area with watermark only, preserving the rest of the image untouched.
+* `--debug` - shows debug information during command execution.
+
+#### "Accurate" option
+
+By default, `despeck` applies colour filters to the entire image and tries to improve the quality of the image by increasing contrast and cleaning the image.
+
+It may decrease the original image quality in some cases, so there is the `--accurate` option, which forces `despeck` to apply despeck filters only to the area where watermark was found, leaving the rest of the image intact.
+
+For example:
+
+##### Original image
+![Original image](readme_images/watermarked.jpg)
+##### Despecked with default options
+![Despecked with defaults](readme_images/defaults.jpg)
+##### Despecked with --accurate option
+![Despecked with --accurate option](readme_images/accurate.jpg)
 
 ## Usage
 

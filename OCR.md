@@ -41,3 +41,12 @@ https://github.com/tesseract-ocr/tesseract/wiki/Data-Files#data-files-for-versio
 ```sh
 $ apt-get install tesseract-ocr tesseract-ocr-chi-sim imagemagick
 ```
+
+# FAQ
+
+> **I'm getting the following error:**
+>
+> 'convert': No such file or directory @ rb_sysopen - /var/folders/2t/xmdrn2sd2lv2w49dv0zw9_q00000gp/T/1521805124.661379908.txt (RTesseract::ConversionError)
+
+
+*This error means you don't have the appropriate Tesseract language installed (or Tesseract is unable to find that language). See language installation instructions above.*
