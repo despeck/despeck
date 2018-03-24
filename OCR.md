@@ -9,20 +9,27 @@ To make OCR work, you need to install the following tools:
 
 ### MacOS
 
-To install tesseract itself:
+To install tesseract itself (with all languages pre-installed):
 
 ```sh
 $ brew install tesseract --all-languages
-$ brew install imagemagick
 ```
 
-Or you can install tesseract with some languages manually:
+Or you can install Tesseract with some languages manually:
 
 ```sh
-$ brew install tesseract wget imagemagick
+$ brew install tesseract
 $ mkdir -p ~/Downloads/tessdata
 $ cd ~/Downloads/tessdata
 $ wget https://github.com/tesseract-ocr/tessdata/raw/3.04.00/chi_sim.traineddata
+```
+
+To install ImageMagick:
+
+```sh
+$ brew install imagemagick@6
+$ echo 'export PATH="/usr/local/opt/imagemagick@6/bin:$PATH"' >> ~/.bash_profile
+$ export PKG_CONFIG_PATH=/usr/local/opt/imagemagick@6/lib/pkgconfig
 ```
 
 The full list of languages trained data can be found here (note, they're different for different Tesseract versions):
