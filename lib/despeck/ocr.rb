@@ -26,7 +26,7 @@ module Despeck
     def for_each_page_image
       paths = []
       Despeck::PdfTools
-        .pdf_to_images(source_path).each_with_index do |pic, index|
+        .pdf_to_images(source_path).each do |pic|
           tempfile = Tempfile.new(['despeck_page', '.jpg'])
           pic.write_to_file(tempfile.path)
           yield tempfile.path
