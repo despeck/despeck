@@ -8,6 +8,11 @@ module Despeck
       exit(0)
     end
 
+    subcommand(
+      'despeck',
+      'Extract text from the despecked image or pdf',
+      Despeck::Commands::DespeckAndOcr
+    )
     subcommand('remove', 'Remove watermark', Despeck::Commands::Remove)
     subcommand('ocr', 'Extract text from the image', Despeck::Commands::Ocr)
   end

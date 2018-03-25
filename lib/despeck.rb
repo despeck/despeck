@@ -4,11 +4,11 @@ require 'clamp'
 require 'benchmark'
 require 'pdf-reader'
 require 'prawn'
-require 'pry'
 require 'vips'
 require 'rmagick'
 require 'rtesseract'
 
+require_relative 'commands/despeck_and_ocr'
 require_relative 'commands/remove'
 require_relative 'commands/ocr'
 

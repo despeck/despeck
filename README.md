@@ -62,6 +62,22 @@ Getting actual help:
 despeck -h
 despeck remove -h
 despeck ocr -h
+despeck despeck -h
+```
+
+### All-in-one (aka Despeck)
+
+If you need to remove watermark and extract OCR text, you may want to use:
+
+```sh
+$ bundle exec despeck despeck -l chi_sim input.jpg
+```
+
+This is the same as two following commands:
+
+```sh
+$ bundle exec despeck remove input.jpg output.jpg
+$ bundle exec despeck ocr -l chi_sim output.jpg
 ```
 
 ### Remove watermark
@@ -75,7 +91,7 @@ $ despeck remove /path/to/input.jpg /path/to/output.jpg
 With the command above, Despeck will try to find the watermark colour, and apply best filter settings to remove the watermark. It may be wrong, so you can pass several parameters to help Despeck with that:
 
 ```sh
-$ despec remove --color 00FF00 --sensitivity 120 --black-const -60 --add-contrast /path/to/input.pdf /path/to/output.pdf
+$ despeck remove --color 00FF00 --sensitivity 120 --black-const -60 --add-contrast /path/to/input.pdf /path/to/output.pdf
 ```
 
 A lit of available options:
