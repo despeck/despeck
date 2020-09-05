@@ -86,7 +86,7 @@ module Despeck
     def grayscale_algorithm(image, pr_color)
       rgb_params = greyscale_params(pr_color)
       rgb_params << 0 if image.bands == 4
-      image.recomb(rgb_params)
+      image.recomb([rgb_params])
     end
 
     def greyscale_params(pr_color)
