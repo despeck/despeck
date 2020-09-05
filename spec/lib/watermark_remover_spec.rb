@@ -6,8 +6,8 @@ RSpec.describe Despeck::WatermarkRemover do
   let(:watermark_color) { nil }
   let(:output_image) do
     described_class.new(
-      add_contrast:    add_contrast,
-      add_black:       add_black,
+      add_contrast: add_contrast,
+      add_black: add_black,
       watermark_color: watermark_color
     ).remove_watermark(input_image)
   end

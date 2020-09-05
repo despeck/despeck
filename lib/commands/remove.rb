@@ -57,10 +57,10 @@ module Despeck
       def remove_watermark_from_image(input, output)
         wr =
           WatermarkRemover.new(
-            add_contrast:    add_contrast?,
-            accurate:        accurate?,
-            black_const:     black_const,
-            sensitivity:     sensitivity,
+            add_contrast: add_contrast?,
+            accurate: accurate?,
+            black_const: black_const,
+            sensitivity: sensitivity,
             watermark_color: color
           )
 
