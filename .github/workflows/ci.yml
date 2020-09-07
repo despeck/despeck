@@ -40,7 +40,8 @@ jobs:
         libgs-dev libgsf-1-dev libmatio-dev libopenslide-dev liborc-0.4-dev \
         libpango1.0-dev libpoppler-glib-dev librsvg2-dev \
         libwebp-dev libfftw3-dev libglib2.0-dev tesseract-ocr \
-        tesseract-ocr-chi-sim imagemagick
+        tesseract-ocr-chi-sim imagemagick \
+        libxslt-dev libxml2-dev
     - name: Setup Libvips
       run: |
         export LIBVIPS_VERSION=${{matrix.libvips_version}}
