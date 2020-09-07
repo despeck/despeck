@@ -20,6 +20,19 @@ jobs:
       uses: ruby/setup-ruby@ec106b438a1ff6ff109590de34ddc62c540232e0
       with:
         ruby-version: ${{ matrix.ruby_version }}
+    - uses: actions/cache@v2
+      with:
+        path: vendor/bundle
+        key: ${{ runner.os }}-${{ matrix.ruby_version }}-${{matrix.libvips_version}}-gems-${{ hashFiles('**/Gemfile.lock') }}
+        restore-keys: |
+          ${{ runner.os }}-${{ matrix.ruby_version }}-${{matrix.libvips_version}}-gems-
+    - uses: actions/cache@v2
+      with:
+        path: ~/vips
+        key: ${{ runner.os }}-${{ matrix.ruby_version }}-${{matrix.libvips_version}}-vips-${{ hashFiles('**/install-vips.sh') }}
+        restore-keys: |
+          ${{ runner.os }}-${{ matrix.ruby_version }}-${{matrix.libvips_version}}-vips-
+
     - name: Setup Deps Package
       run: |
         apt-get install -y libexpat1-dev gettext liblcms2-dev \
@@ -33,6 +46,12 @@ jobs:
         export LIBVIPS_VERSION=${{matrix.libvips_version}}
         bash install-vips.sh --without-python
     - name: Bundle
-      run: bundle install
+      run: |
+        export NOKOGIRI_USE_SYSTEM_LIBRARIES=true
+        export PATH=$HOME/vips/bin:$PATH
+        export LD_LIBRARY_PATH=$HOME/vips/lib:$LD_LIBRARY_PATH
+        export PKG_CONFIG_PATH=$HOME/vips/lib/pkgconfig:$PKG_CONFIG_PATH
+        bundle config path vendor/bundle
+        bundle install
     - name: Rspec
       run: bundle exec rspec
