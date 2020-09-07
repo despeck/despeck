@@ -1,0 +1,38 @@
+
+name: ci
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  rspec:
+    name: Rspec on Ruby ${{ matrix.ruby_version }} and libvips ${{ matrix.libvips_version }}
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        ruby_version: ['2.3', '2.4', '2.5']
+        libvips_version: ['8.6.5', '8.7.4']
+    steps:
+    - uses: actions/checkout@v2
+    - name: Set up Ruby
+      uses: ruby/setup-ruby@ec106b438a1ff6ff109590de34ddc62c540232e0
+      with:
+        ruby-version: ${{ matrix.ruby_version }}
+    - name: Setup Deps Package
+      run: |
+        apt-get install -y libexpat1-dev gettext liblcms2-dev \
+        libmagickwand-dev libopenexr-dev libcfitsio-dev libgif-dev \
+        libgs-dev libgsf-1-dev libmatio-dev libopenslide-dev liborc-0.4-dev \
+        libpango1.0-dev libpoppler-glib-dev librsvg2-dev \
+        libwebp-dev libfftw3-dev libglib2.0-dev tesseract-ocr \
+        tesseract-ocr-chi-sim imagemagick
+    - name: Setup Libvips
+      run: |
+        export LIBVIPS_VERSION=${{matrix.libvips_version}}
+        bash install-vips.sh --without-python
+    - name: Bundle
+      run: bundle install
+    - name: Rspec
+      run: bundle exec rspec
