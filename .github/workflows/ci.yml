@@ -15,7 +15,7 @@ jobs:
         ruby_version: ['2.3', '2.4', '2.5']
         libvips_version: ['8.6.5', '8.7.4']
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v2.3.2
     - name: Set up Ruby
       uses: ruby/setup-ruby@ec106b438a1ff6ff109590de34ddc62c540232e0
       with:
@@ -44,6 +44,10 @@ jobs:
         libxslt-dev libxml2-dev
     - name: Setup Libvips
       run: |
+        export NOKOGIRI_USE_SYSTEM_LIBRARIES=true
+        export PATH=$HOME/vips/bin:$PATH
+        export LD_LIBRARY_PATH=$HOME/vips/lib:$LD_LIBRARY_PATH
+        export PKG_CONFIG_PATH=$HOME/vips/lib/pkgconfig:$PKG_CONFIG_PATH
         export LIBVIPS_VERSION=${{matrix.libvips_version}}
         bash install-vips.sh --without-python
     - name: Bundle
@@ -55,4 +59,9 @@ jobs:
         bundle config path vendor/bundle
         bundle install
     - name: Rspec
-      run: bundle exec rspec
+      run: |
+        export NOKOGIRI_USE_SYSTEM_LIBRARIES=true
+        export PATH=$HOME/vips/bin:$PATH
+        export LD_LIBRARY_PATH=$HOME/vips/lib:$LD_LIBRARY_PATH
+        export PKG_CONFIG_PATH=$HOME/vips/lib/pkgconfig:$PKG_CONFIG_PATH
+        bundle exec rspec
