@@ -23,7 +23,7 @@ RSpec.describe Despeck::DominantColorV2 do
     let(:image) { read_image('purple_watermark.jpg') }
 
     it 'returns RGB of purple colour' do
-      expect(subject).to eq [185, 157, 183]
+      expect(subject).to eq [185, 157, 184]
     end
   end
 
@@ -39,7 +39,7 @@ RSpec.describe Despeck::DominantColorV2 do
     let(:image) { read_image('blue_watermark.jpg') }
 
     it 'returns RGB of blue colour' do
-      expect(subject).to eq [169, 198, 224]
+      expect(subject).to eq [169, 198, 225]
     end
   end
 
@@ -47,7 +47,7 @@ RSpec.describe Despeck::DominantColorV2 do
     let(:image) { read_image('green_watermark.jpg') }
 
     it 'returns RGB of green colour' do
-      expect(subject).to eq [172, 205, 172]
+      expect(subject).to eq [171, 204, 171]
     end
   end
 
