@@ -74,7 +74,7 @@ RSpec.describe Despeck::WatermarkRemover do
 
       it_behaves_like 'watermark remover'
     end
-   end
+  end
 
   context 'for image without watermark' do
     let(:input_image) { read_image('bw.jpg') }
