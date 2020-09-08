@@ -63,7 +63,7 @@ module Despeck
       output_image = grayscale_algorithm(image, wm_color)
       output_image = increase_contrast(output_image) if add_contrast
       output_image = apply_black_improvement(output_image)
-      output_image = apply_grey_to_black(output_image) if wm_color != 'FF0000'
+      output_image = apply_grey_to_black(output_image)
       output_image
     end
 
