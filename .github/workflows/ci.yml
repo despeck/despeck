@@ -64,4 +64,6 @@ jobs:
         export PATH=$HOME/vips/bin:$PATH
         export LD_LIBRARY_PATH=$HOME/vips/lib:$LD_LIBRARY_PATH
         export PKG_CONFIG_PATH=$HOME/vips/lib/pkgconfig:$PKG_CONFIG_PATH
+        gem uninstall bundler
+        gem install bundler -v '~> 1.16'
         bundle exec rspec
