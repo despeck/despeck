@@ -8,7 +8,7 @@ on:
 
 jobs:
   rspec:
-    name: Rspec on Ruby ${{ matrix.ruby_version }} and libvips ${{ matrix.libvips_version }}
+    name: RSpec [ruby-${{ matrix.ruby_version }}&libvips-${{ matrix.libvips_version }}]
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -20,19 +20,6 @@ jobs:
       uses: ruby/setup-ruby@ec106b438a1ff6ff109590de34ddc62c540232e0
       with:
         ruby-version: ${{ matrix.ruby_version }}
-    - uses: actions/cache@v2
-      with:
-        path: vendor/bundle
-        key: ${{ runner.os }}-${{ matrix.ruby_version }}-${{matrix.libvips_version}}-gems-${{ hashFiles('**/Gemfile.lock') }}
-        restore-keys: |
-          ${{ runner.os }}-${{ matrix.ruby_version }}-${{matrix.libvips_version}}-gems-
-    - uses: actions/cache@v2
-      with:
-        path: ~/vips
-        key: ${{ runner.os }}-${{ matrix.ruby_version }}-${{matrix.libvips_version}}-vips-${{ hashFiles('**/install-vips.sh') }}
-        restore-keys: |
-          ${{ runner.os }}-${{ matrix.ruby_version }}-${{matrix.libvips_version}}-vips-
-
     - name: Setup Deps Package
       run: |
         apt-get install -y libexpat1-dev gettext liblcms2-dev \
@@ -42,12 +29,13 @@ jobs:
         libwebp-dev libfftw3-dev libglib2.0-dev tesseract-ocr \
         tesseract-ocr-chi-sim imagemagick \
         libxslt-dev libxml2-dev
+    - name: Cache libvips
+      uses: actions/cache@v2
+      with:
+        path: ~/vips
+        key: ${{ runner.os }}-${{matrix.libvips_version}}-vips-${{ hashFiles('**/install-vips.sh') }}
     - name: Setup Libvips
       run: |
-        export NOKOGIRI_USE_SYSTEM_LIBRARIES=true
-        export PATH=$HOME/vips/bin:$PATH
-        export LD_LIBRARY_PATH=$HOME/vips/lib:$LD_LIBRARY_PATH
-        export PKG_CONFIG_PATH=$HOME/vips/lib/pkgconfig:$PKG_CONFIG_PATH
         export LIBVIPS_VERSION=${{matrix.libvips_version}}
         bash install-vips.sh --without-python
     - name: Bundle
@@ -56,14 +44,14 @@ jobs:
         export PATH=$HOME/vips/bin:$PATH
         export LD_LIBRARY_PATH=$HOME/vips/lib:$LD_LIBRARY_PATH
         export PKG_CONFIG_PATH=$HOME/vips/lib/pkgconfig:$PKG_CONFIG_PATH
+        gem uninstall bundler
+        gem install bundler -v '~> 1.16'
         bundle config path vendor/bundle
         bundle install
+        cat Gemfile.lock
     - name: Rspec
       run: |
-        export NOKOGIRI_USE_SYSTEM_LIBRARIES=true
         export PATH=$HOME/vips/bin:$PATH
         export LD_LIBRARY_PATH=$HOME/vips/lib:$LD_LIBRARY_PATH
         export PKG_CONFIG_PATH=$HOME/vips/lib/pkgconfig:$PKG_CONFIG_PATH
-        gem uninstall bundler
-        gem install bundler -v '~> 1.16'
         bundle exec rspec
