@@ -47,9 +47,10 @@ module Despeck
         WatermarkMask.new(image).find_masks!
       output_image = __remove_watermark__(watermark)
       return unless output_image
+
       no_watermark = no_watermark.colourspace('b-w').bandjoin(mask.invert)
 
-      output_image = output_image.colourspace("srgb") if output_image.bands < 3
+      output_image = output_image.colourspace('srgb') if output_image.bands < 3
       output_image = output_image.bandjoin(mask) if output_image.bands == 3
       output_image.composite(no_watermark, 'over')
     end
