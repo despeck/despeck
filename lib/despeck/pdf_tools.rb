@@ -15,16 +15,16 @@ module Despeck
         images
       end
 
-      def images_to_pdf(images, pdf_path)
+      def images_to_pdf(images, pdf_path, origin_images = [])
         doc = nil
 
-        for_each_image_file(images) do |path, page_size, pic_size, layout|
+        for_each_image_file(images,
+                            origin_images) do |path, pg_size, pic_size, layout|
           if doc
-            doc.start_new_page(size: page_size, layout: layout)
+            doc.start_new_page(size: pg_size, layout: layout)
           else
-            doc = Prawn::Document.new(page_size: page_size, page_layout: layout)
+            doc = Prawn::Document.new(page_size: pg_size, page_layout: layout)
           end
-
           doc.image(path, position: :left, vposition: :top, fit: pic_size)
         end
 
@@ -43,10 +43,11 @@ module Despeck
 
       private
 
-      def for_each_image_file(images)
-        images.each do |pic|
+      def for_each_image_file(images, origin_images)
+        images.each_with_index do |picture, i|
           tempfile = Tempfile.new(['despeck', '.jpg'])
-          pic.write_to_file(tempfile.path)
+          pic = picture || origin_images[i]
+          picture.write_to_file(tempfile.path)
 
           page_size = pdf_size(pic)
           layout = page_size.max == page_size.first ? :landscape : :portrait
