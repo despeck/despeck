@@ -42,11 +42,11 @@ module Despeck
         Despeck.apply_logger_level(debug?)
 
         if input_file.end_with?('.pdf')
-          images =
-            PdfTools.pdf_to_images(input_file).map do |image|
-              remove_watermark_from_image(image, nil)
-            end
-          PdfTools.images_to_pdf(images, output_file)
+          origin_images = PdfTools.pdf_to_images(input_file)
+          images = origin_images.map do |image|
+            remove_watermark_from_image(image, nil)
+          end
+          PdfTools.images_to_pdf(images, output_file, origin_images)
         else
           remove_watermark_from_image(input_file, output_file)
         end
