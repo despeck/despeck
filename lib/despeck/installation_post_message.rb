@@ -1,17 +1,15 @@
 # frozen_string_literal: true
 
 module Despeck
-  module InstallationCheck
+  module InstallationPostMessage
     module_function
 
-    def pre_install
+    def pre_install_valid?
       require 'vips'
       return print_error unless vips_check_passed?
 
       true
     end
-
-    def post_install; end
 
     def vips_support_pdf?
       return true if bypassed_vips_pdf_support?
