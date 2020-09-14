@@ -1,14 +1,19 @@
 # frozen_string_literal: true
 
 module Despeck
+  # Print notes from the installation
   module InstallationPostMessage
     module_function
 
-    def pre_install_valid?
-      require 'vips'
-      return print_error unless vips_check_passed?
+    def build
+      if %w[1 true TRUE].include?(
+        ENV.fetch('DESPECK_SKIP_INSTALL_NOTES', false)
+      )
+        return
+      end
 
-      true
+      require 'vips'
+      return print_notes unless vips_check_passed?
     end
 
     def vips_support_pdf?
@@ -16,11 +21,11 @@ module Despeck
         Vips::Image.pdfload
       rescue Vips::Error => e
         if e.message =~ /class "pdfload" not found/
-          error_messages << <<~DOC
-          - Libvips installed without PDF support, make sure you
-            have PDFium/poppler-glib installed before installing
-            despeck. For more detail install instruction go to
-            this page https://libvips.github.io/libvips/install.html
+          notes << <<~DOC
+            - Libvips installed without PDF support, make sure you
+              have PDFium/poppler-glib installed before installing
+              despeck. For more detail install instruction go to
+              this page https://libvips.github.io/libvips/install.html
           DOC
           return false
         end
@@ -32,9 +37,9 @@ module Despeck
       version_only = Vips.version_string.match(/(\d+\.\d+\.\d+)/)[0]
       return true if version_only > '8.6.5'
 
-      error_messages << <<~DOC
-      - Your libvips version is should be minimal at 8.6.5
-        Please rebuild/reinstall your libvips to >= 8.6.5 .
+      notes << <<~DOC
+        - Your libvips version is should be minimal at 8.6.5
+          Please rebuild/reinstall your libvips to >= 8.6.5 .
       DOC
       false
     end
@@ -46,20 +51,21 @@ module Despeck
       passed
     end
 
-    def error_messages
-      @error_messages ||= []
+    def notes
+      @notes ||= []
     end
 
-    def print_error
-      return if error_messages.empty?
+    def print_notes
+      return if notes.empty?
 
-      puts <<~ERROR
+      puts <<~NOTES
         #{hr '='}
-        Despeck Post Installation Notes :
-        #{hr}
-        #{error_messages.join("\n")}
+          Despeck Installation Notes :
+        #{hr '-'}
+        #{notes.uniq.join("\n")}
+          To Skip this notes `export DESPECK_SKIP_INSTALL_NOTES=1`
         #{hr '='}
-      ERROR
+      NOTES
       @error_message = []
       false
     end
