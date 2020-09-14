@@ -3,5 +3,6 @@
 
 require 'bundler/setup'
 require 'despeck'
-
+require 'despeck/installation_post_message'
+Despeck::InstallationPostMessage.build
 Despeck::CLI.run
