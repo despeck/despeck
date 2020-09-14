@@ -12,16 +12,15 @@ module Despeck
     end
 
     def vips_support_pdf?
-      return true if bypassed_vips_pdf_support?
-
       begin
         Vips::Image.pdfload
       rescue Vips::Error => e
         if e.message =~ /class "pdfload" not found/
           error_messages << <<~DOC
-            Libvips installed without PDF support, make sure you have PDFium/poppler-glib installed before building libvips
-            For more detail instruction go to this page https://libvips.github.io/libvips/install.html
-            To bypass this error, do this `export DESPECK_BYPASS_VIPS_PDF_SUPPORT_CHECK=1`
+          - Libvips installed without PDF support, make sure you
+            have PDFium/poppler-glib installed before installing
+            despeck. For more detail install instruction go to
+            this page https://libvips.github.io/libvips/install.html
           DOC
           return false
         end
@@ -30,15 +29,12 @@ module Despeck
     end
 
     def vips_version_supported?
-      return true if bypassed_vips_version?
-
       version_only = Vips.version_string.match(/(\d+\.\d+\.\d+)/)[0]
       return true if version_only > '8.6.5'
 
       error_messages << <<~DOC
-        Your libvips version is should be minimal at 8.6.5
+      - Your libvips version is should be minimal at 8.6.5
         Please rebuild/reinstall your libvips to >= 8.6.5 .
-        To bypass this error, do this `DESPECK_BYPASS_VIPS_VERSION_CHECK=1`
       DOC
       false
     end
@@ -50,14 +46,6 @@ module Despeck
       passed
     end
 
-    def bypassed_vips_version?
-      ['', '1', 'TRUE', 'true'].include?(ENV.fetch('DESPECK_BYPASS_VIPS_VERSION_CHECK', false))
-    end
-
-    def bypassed_vips_pdf_support?
-      ['', '1', 'TRUE', 'true'].include?(ENV.fetch('DESPECK_BYPASS_VIPS_PDF_SUPPORT_CHECK', false))
-    end
-
     def error_messages
       @error_messages ||= []
     end
@@ -67,9 +55,9 @@ module Despeck
 
       puts <<~ERROR
         #{hr '='}
-                Despeck Installation ERROR
+        Despeck Post Installation Notes :
         #{hr}
-        #{error_messages.join(hr + "\n")}
+        #{error_messages.join("\n")}
         #{hr '='}
       ERROR
       @error_message = []
