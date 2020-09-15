@@ -24,11 +24,11 @@ Gem::Specification.new do |spec|
   spec.bindir        = 'exe'
   spec.executables   = spec.files.grep(%r{^exe/}) { |f| File.basename(f) }
   spec.require_paths = ['lib']
-  spec.required_ruby_version = '>= 2.3'
+  spec.required_ruby_version = '>= 2.4'
 
   spec.add_dependency 'clamp', '~> 1.3'
   spec.add_dependency 'pdf-reader', '~> 2.1'
-  spec.add_dependency 'prawn', '~> 2.3'
+  spec.add_dependency 'prawn', '~> 2.2'
   spec.add_dependency 'rmagick', '~> 4.0'
   spec.add_dependency 'rtesseract', '~> 3.1'
   spec.add_dependency 'ruby-vips', '~> 2.0'
@@ -36,5 +36,5 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency 'bundler'
   spec.add_development_dependency 'rake', '~> 13.0'
   spec.add_development_dependency 'rspec', '~> 3.0'
-  spec.add_development_dependency 'rubocop', '~> 0.90.0'
+  spec.add_development_dependency 'rubocop', '~> 0.89.0'
 end
