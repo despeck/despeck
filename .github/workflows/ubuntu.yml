@@ -67,9 +67,6 @@ jobs:
         export LD_LIBRARY_PATH=$HOME/vips/lib:$LD_LIBRARY_PATH
         export PKG_CONFIG_PATH=$HOME/vips/lib/pkgconfig:$PKG_CONFIG_PATH
         bundle exec rake
-    - name: Rubocop
-      run: |
-        export PATH=$HOME/vips/bin:$PATH
-        export LD_LIBRARY_PATH=$HOME/vips/lib:$LD_LIBRARY_PATH
-        export PKG_CONFIG_PATH=$HOME/vips/lib/pkgconfig:$PKG_CONFIG_PATH
-        bundle exec rubocop
+    # - name: Rubocop
+    #   run: |
+    #     bundle exec rubocop
