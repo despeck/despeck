@@ -23,6 +23,7 @@ jobs:
         experimental: [false]
         include:
           - ruby: '2.7'
+            libvips_version: ['8.6.5', '8.7.4']
             experimental: true
 
     steps:
