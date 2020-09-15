@@ -22,9 +22,9 @@ jobs:
         libvips_version: ['8.6.5', '8.7.4']
         experimental: [false]
         include:
-          - ruby: [ '2.7' ]
-            libvips_version: ['8.6.5', '8.7.4']
-            experimental: [true]
+          - ruby: '2.7'
+            libvips_version: '8.7.4'
+            experimental: true
 
     steps:
     - uses: actions/checkout@v2
