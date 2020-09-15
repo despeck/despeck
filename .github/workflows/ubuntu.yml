@@ -1,34 +1,54 @@
 
-name: ci
+name: ubuntu
 on:
   push:
     branches: [ master ]
+    tags:
+      - '*'
   pull_request:
-    branches: [ master ]
+    paths-ignore:
+      - .github/workflows/macos.yml
+      - .github/workflows/windows.yml
 
 jobs:
   rspec:
-    name: RSpec [ruby-${{ matrix.ruby_version }}&libvips-${{ matrix.libvips_version }}]
+    name: Ubuntu RSpec [ruby-${{ matrix.ruby }}&libvips-${{ matrix.libvips_version }}]
     runs-on: ubuntu-latest
+    continue-on-error: ${{ matrix.experimental }}
     strategy:
+      fail-fast: false
       matrix:
-        ruby_version: ['2.3', '2.4', '2.5']
+        ruby: [ '2.6', '2.5', '2.4', '2.3' ]
         libvips_version: ['8.6.5', '8.7.4']
+        experimental: [false]
+        include:
+          - ruby: '2.7'
+            experimental: true
+
     steps:
-    - uses: actions/checkout@v2.3.2
-    - name: Set up Ruby
-      uses: ruby/setup-ruby@ec106b438a1ff6ff109590de34ddc62c540232e0
+      - name: Update gems
+        run: |
+          gem install bundler
+          bundle install --jobs 4 --retry 3
+      - name: Run specs
+        run: |
+          bundle exec rake
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Use Ruby
+      uses: actions/setup-ruby@v1
       with:
-        ruby-version: ${{ matrix.ruby_version }}
+        ruby-version: ${{ matrix.ruby }}
     - name: Setup Deps Package
       run: |
         sudo apt-get install -y libexpat1-dev gettext liblcms2-dev \
-        libmagickwand-dev libopenexr-dev libcfitsio-dev libgif-dev \
-        libgs-dev libgsf-1-dev libmatio-dev libopenslide-dev liborc-0.4-dev \
-        libpango1.0-dev libpoppler-glib-dev librsvg2-dev \
-        libwebp-dev libfftw3-dev libglib2.0-dev tesseract-ocr \
-        tesseract-ocr-chi-sim imagemagick \
-        libxslt-dev libxml2-dev
+          libmagickwand-dev libopenexr-dev libcfitsio-dev libgif-dev \
+          libgs-dev libgsf-1-dev libmatio-dev libopenslide-dev liborc-0.4-dev \
+          libpango1.0-dev libpoppler-glib-dev librsvg2-dev \
+          libwebp-dev libfftw3-dev libglib2.0-dev tesseract-ocr \
+          tesseract-ocr-chi-sim imagemagick \
+          libxslt-dev libxml2-dev
     - name: Cache libvips
       uses: actions/cache@v2
       with:
@@ -38,7 +58,7 @@ jobs:
       run: |
         export LIBVIPS_VERSION=${{matrix.libvips_version}}
         bash install-vips.sh --without-python
-    - name: Bundle
+    - name: Update gems
       run: |
         export NOKOGIRI_USE_SYSTEM_LIBRARIES=true
         export PATH=$HOME/vips/bin:$PATH
@@ -47,9 +67,9 @@ jobs:
         gem uninstall bundler
         gem install bundler -v '~> 1.16'
         bundle config path vendor/bundle
-        bundle install
+        bundle install --jobs 4 --retry 3
         cat Gemfile.lock
-    - name: Rspec
+    - name: Run specs
       run: |
         export PATH=$HOME/vips/bin:$PATH
         export LD_LIBRARY_PATH=$HOME/vips/lib:$LD_LIBRARY_PATH
