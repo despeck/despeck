@@ -22,7 +22,7 @@ jobs:
         ruby-version: ${{ matrix.ruby_version }}
     - name: Setup Deps Package
       run: |
-        apt-get install -y libexpat1-dev gettext liblcms2-dev \
+        sudo apt-get install -y libexpat1-dev gettext liblcms2-dev \
         libmagickwand-dev libopenexr-dev libcfitsio-dev libgif-dev \
         libgs-dev libgsf-1-dev libmatio-dev libopenslide-dev liborc-0.4-dev \
         libpango1.0-dev libpoppler-glib-dev librsvg2-dev \
@@ -55,3 +55,9 @@ jobs:
         export LD_LIBRARY_PATH=$HOME/vips/lib:$LD_LIBRARY_PATH
         export PKG_CONFIG_PATH=$HOME/vips/lib/pkgconfig:$PKG_CONFIG_PATH
         bundle exec rspec
+    - name: Rubocop
+      run: |
+        export PATH=$HOME/vips/bin:$PATH
+        export LD_LIBRARY_PATH=$HOME/vips/lib:$LD_LIBRARY_PATH
+        export PKG_CONFIG_PATH=$HOME/vips/lib/pkgconfig:$PKG_CONFIG_PATH
+        bundle exec rubocop
