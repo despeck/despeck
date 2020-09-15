@@ -104,7 +104,6 @@ module Despeck
       apply_sentivity(defaults)
     end
 
-    # rubocop:disable Metrics/AbcSize
     def apply_sentivity(rgb)
       max = rgb.max
       res = rgb.map do |value|
@@ -119,7 +118,6 @@ module Despeck
 
       res
     end
-    # rubocop:enable Metrics/AbcSize
 
     def increase_contrast(bw_image)
       bw_image.colourspace('lch') * [1, 100, 100] + [0, 0, 500]
