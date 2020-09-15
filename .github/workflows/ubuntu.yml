@@ -26,15 +26,6 @@ jobs:
             experimental: true
 
     steps:
-      - name: Update gems
-        run: |
-          gem install bundler
-          bundle install --jobs 4 --retry 3
-      - name: Run specs
-        run: |
-          bundle exec rake
-
-    steps:
     - uses: actions/checkout@v2
     - name: Use Ruby
       uses: actions/setup-ruby@v1
@@ -74,7 +65,7 @@ jobs:
         export PATH=$HOME/vips/bin:$PATH
         export LD_LIBRARY_PATH=$HOME/vips/lib:$LD_LIBRARY_PATH
         export PKG_CONFIG_PATH=$HOME/vips/lib/pkgconfig:$PKG_CONFIG_PATH
-        bundle exec rspec
+        bundle exec rake
     - name: Rubocop
       run: |
         export PATH=$HOME/vips/bin:$PATH
