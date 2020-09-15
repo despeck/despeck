@@ -22,10 +22,10 @@ module Despeck
       rescue Vips::Error => e
         if e.message =~ /class "pdfload" not found/
           notes << <<~DOC
-            - Libvips installed without PDF support, make sure you
+            - Libvips is installed without PDF support. Make sure you
               have PDFium/poppler-glib installed before installing
-              despeck. For more detail install instruction go to
-              this page https://libvips.github.io/libvips/install.html
+              despeck. For more details on installation please see:
+              https://libvips.github.io/libvips/install.html
           DOC
           return false
         end
@@ -35,11 +35,13 @@ module Despeck
 
     def vips_version_supported?
       version_only = Vips.version_string.match(/(\d+\.\d+\.\d+)/)[0]
-      return true if version_only > '8.6.5'
+
+      min_version = '8.6.5'
+      return true if version_only > min_version
 
       notes << <<~DOC
-        - Your libvips version is should be minimal at 8.6.5
-          Please rebuild/reinstall your libvips to >= 8.6.5 .
+        - Your libvips version must be newer than version #{min_version}.
+          Please rebuild/reinstall your libvips to >= #{min_version}.
       DOC
       false
     end
