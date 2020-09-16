@@ -112,6 +112,7 @@ To install ImageMagick:
 $ brew install imagemagick@6
 $ echo 'export PATH="/usr/local/opt/imagemagick@6/bin:$PATH"' >> ~/.bash_profile
 $ export PKG_CONFIG_PATH=/usr/local/opt/imagemagick@6/lib/pkgconfig
+$ brew link --force imagemagick@6
 ----
 
 The full list of languages trained data can be found here (note, they're different for different Tesseract versions):
