@@ -47,6 +47,11 @@ gem 'despeck'
 
 and then run `bundle install`
 
+==== Notes :
+For removing a watermark from a PDF file, your libvips need to build with PDF support.
+Make sure you have `PDFium`/`poppler-glib` installed before building libvips.
+For more details on libvips installation please see: https://libvips.github.io/libvips/install.html
+
 === OCR functions
 
 To be able to extract text via `despeck ocr` command, you'll need to install:
