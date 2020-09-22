@@ -37,7 +37,7 @@ module Despeck
       version_only = Vips.version_string.match(/(\d+\.\d+\.\d+)/)[0]
 
       min_version = '8.6.5'
-      return true if version_only > min_version
+      return true if Gem::Version.new(version_only) > Gem::Version.new(min_version)
 
       notes << <<~DOC
         - Your libvips version must be newer than version #{min_version}.
