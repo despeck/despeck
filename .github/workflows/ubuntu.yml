@@ -41,35 +41,36 @@ jobs:
           libwebp-dev libfftw3-dev libglib2.0-dev tesseract-ocr \
           tesseract-ocr-chi-sim \
           libxslt-dev libxml2-dev
+    # - name: Cache ImageMagick
+    #   uses: actions/cache@v2
+    #   with:
+    #     path: ~/imagemagick
+    #     key: ${{ runner.os }}-imagemagick-${{ hashFiles('**/install-imagemagick.sh') }}
     - name: Setup ImageMagick 7
       run: |
         export IMAGEMAGICK_VERSION=7.0.10-23
         ./install-imagemagick.sh
-    - name: Cache libvips
-      uses: actions/cache@v2
-      with:
-        path: ~/vips
-        key: ${{ runner.os }}-${{matrix.libvips_version}}-vips-${{ hashFiles('**/install-vips.sh') }}
+        sudo ldconfig
+    # - name: Cache libvips
+    #   uses: actions/cache@v2
+    #   with:
+    #     path: ~/vips
+    #     key: ${{ runner.os }}-${{matrix.libvips_version}}-vips-${{ hashFiles('**/install-vips.sh') }}
     - name: Setup Libvips
       run: |
         export LIBVIPS_VERSION=${{matrix.libvips_version}}
         bash install-vips.sh --without-python
+        sudo ldconfig
     - name: Update gems
       run: |
         export NOKOGIRI_USE_SYSTEM_LIBRARIES=true
-        export PATH=$HOME/vips/bin:$PATH
-        export LD_LIBRARY_PATH=$HOME/vips/lib:$LD_LIBRARY_PATH
-        export PKG_CONFIG_PATH=$HOME/vips/lib/pkgconfig:$PKG_CONFIG_PATH
         gem install bundler -v '~> 1.16' --default
         bundle config path vendor/bundle
         bundle install --jobs 4 --retry 3
         cat Gemfile.lock
     - name: Run specs
       run: |
-        export PATH=$HOME/vips/bin:$PATH
-        export LD_LIBRARY_PATH=$HOME/vips/lib:$LD_LIBRARY_PATH
-        export PKG_CONFIG_PATH=$HOME/vips/lib/pkgconfig:$PKG_CONFIG_PATH
         bundle exec rake
-    # - name: Rubocop
-    #   run: |
-    #     bundle exec rubocop
+    - name: Rubocop
+      run: |
+        bundle exec rubocop
