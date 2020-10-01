@@ -2,8 +2,6 @@
 
 set -euox pipefail
 
-gem install bundler
-
 if [ -v STYLE_CHECKS ]; then
   set +ux
   exit 0
@@ -11,7 +9,6 @@ fi
 
 if [ ! -v IMAGEMAGICK_VERSION ]; then
   echo "you must specify an ImageMagick version."
-  echo "example: 'IMAGEMAGICK_VERSION=6.8.9-10 bash ./before_install_linux.sh'"
   exit 1
 fi
 
@@ -30,6 +27,7 @@ if [ ! -d /usr/include/freetype ]; then
   # If `/usr/include/freetype` is not existed, ImageMagick 6.7 configuration fails about Freetype.
   sudo ln -sf /usr/include/freetype2 /usr/include/freetype
 fi
+
 
 project_dir=$(pwd)
 build_dir="${project_dir}/build-ImageMagick/ImageMagick-${IMAGEMAGICK_VERSION}"
@@ -62,8 +60,4 @@ fi
 
 cd "${build_dir}"
 sudo make install -j
-cd "${project_dir}"
-
-sudo ldconfig
-
 set +ux
