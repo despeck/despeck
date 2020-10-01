@@ -35,12 +35,22 @@ jobs:
     - name: Setup Deps Package
       run: |
         sudo apt-get install -y libexpat1-dev gettext liblcms2-dev \
-          libmagickwand-dev libopenexr-dev libcfitsio-dev libgif-dev \
+          libopenexr-dev libcfitsio-dev libgif-dev \
           libgs-dev libgsf-1-dev libmatio-dev libopenslide-dev liborc-0.4-dev \
           libpango1.0-dev libpoppler-glib-dev librsvg2-dev \
           libwebp-dev libfftw3-dev libglib2.0-dev tesseract-ocr \
-          tesseract-ocr-chi-sim imagemagick \
+          tesseract-ocr-chi-sim \
           libxslt-dev libxml2-dev
+    - name: Setup ImageMagick 7
+      run: |
+        mkdir /tmp/imagemagick
+        wget https://www.imagemagick.org/download/ImageMagick.tar.gz
+        tar -xf ImageMagick.tar.gz -C /tmp/imagemagick --strip 1
+        cd /tmp/imagemagick
+        ./configure
+        make
+        sudo make install
+        sudo ldconfig /usr/local/lib
     - name: Cache libvips
       uses: actions/cache@v2
       with:
