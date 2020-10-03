@@ -1,5 +1,5 @@
 #!/bin/bash
-
+# refresh_at 03/10/2020 23:59
 vips_site=https://github.com/jcupitt/libvips/releases/download
 version=$LIBVIPS_VERSION
 
