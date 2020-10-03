@@ -60,4 +60,5 @@ fi
 
 cd "${build_dir}"
 sudo make install -j
+sudo ldconfig
 set +ux
