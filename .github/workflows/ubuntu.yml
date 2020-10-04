@@ -46,7 +46,7 @@ jobs:
       uses: actions/cache@v2
       with:
         path: ~/vips
-        key: ${{ runner.os }}-${{matrix.libvips_version}}-vips-${{ hashFiles('**/install-vips.sh') }}
+        key: ${{ runner.os }}-${{matrix.libvips_version}}-vips__im-${{ matrix.image_magick_version }}--${{ hashFiles('**/install-vips.sh') }}
     - name: Setup ImageMagick 7
       run: |
         export IMAGEMAGICK_VERSION=${{ matrix.image_magick_version }}
