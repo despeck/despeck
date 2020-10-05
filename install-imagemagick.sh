@@ -28,12 +28,18 @@ if [ ! -d /usr/include/freetype ]; then
   sudo ln -sf /usr/include/freetype2 /usr/include/freetype
 fi
 
+if [ ! -v SOURCE_TARGET_DIR ]; then
+  project_dir=$(pwd)
+else
+  project_dir=${SOURCE_TARGET_DIR}
+fi
 
-project_dir=$(pwd)
+
 build_dir="${project_dir}/build-ImageMagick/ImageMagick-${IMAGEMAGICK_VERSION}"
 if [ -v CONFIGURE_OPTIONS ]; then
   build_dir="${build_dir}-${CONFIGURE_OPTIONS}"
 fi
+
 
 build_imagemagick() {
   mkdir -p build-ImageMagick
@@ -52,10 +58,17 @@ build_imagemagick() {
   cd "${build_dir}"
   CC="ccache cc" CXX="ccache c++" ./configure --prefix=/usr "${options}"
   make -j
+  touch "${build_dir}/BUILD_DONE.flag" 
 }
 
-if [ ! -d "${build_dir}" ]; then
-  build_imagemagick
+
+cd "${project_dir}"
+if [ -f "${build_dir}/BUILD_DONE.flag" ]; then
+  echo "build use cache"
+else
+  if [ ! -d "${build_dir}" ]; then
+    build_imagemagick
+  fi
 fi
 
 cd "${build_dir}"

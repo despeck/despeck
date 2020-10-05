@@ -18,15 +18,15 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        ruby: [ '2.6', '2.5', '2.4' ]
-        libvips_version: ['8.6.5', '8.7.4', '8.10.1']
+        ruby: [ '2.6']
+        libvips_version: ['8.10.1']
         image_magick_version: [ '7.0.10-23']
         experimental: [false]
-        include:
-          - ruby: '2.7'
-            libvips_version: '8.7.4'
-            image_magick_version:  '7.0.10-23'
-            experimental: true
+        # include:
+        #   - ruby: '2.7'
+        #     libvips_version: '8.7.4'
+        #     image_magick_version:  '7.0.10-23'
+        #     experimental: true
 
     steps:
     - uses: actions/checkout@v2
@@ -43,18 +43,23 @@ jobs:
           libwebp-dev libfftw3-dev libglib2.0-dev tesseract-ocr \
           tesseract-ocr-chi-sim \
           libxslt-dev libxml2-dev
-    - name: Cache libvips
+    - name: Cache Custom build
       uses: actions/cache@v2
       with:
-        path: ~/vips
-        key: ${{ runner.os }}-${{matrix.libvips_version}}-vips___${{ matrix.image_magick_version }}-im__${{ hashFiles('**/install-vips.sh') }}
+        path: ~/custom-build
+        key: ${{ runner.os }}-${{matrix.libvips_version}}-vips___${{ matrix.image_magick_version }}-im__${{ hashFiles('**/install-vips.sh') }}__${{ hashFiles('**/install-imagemagick.sh') }}
+    - name: Build Cache Dir
+      run: |
+        mkdir -p ~/custom-build
     - name: Setup ImageMagick ${{ matrix.image_magick_version }}
       run: |
         export IMAGEMAGICK_VERSION=${{ matrix.image_magick_version }}
+        export SOURCE_TARGET_DIR=~/custom-build
         ./install-imagemagick.sh
     - name: Setup Libvips ${{matrix.libvips_version}}
       run: |
         export LIBVIPS_VERSION=${{matrix.libvips_version}}
+        export SOURCE_TARGET_DIR=~/custom-build
         bash install-vips.sh --without-python
     - name: Update gems
       run: |
