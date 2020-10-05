@@ -12,7 +12,7 @@ on:
 
 jobs:
   rspec:
-    name: Ubuntu [ruby-${{ matrix.ruby }}&libvips-${{ matrix.libvips_version }}&IM- ${{ matrix.image_magick_version }}]
+    name: Ubuntu [ruby-${{ matrix.ruby }}&libvips-${{ matrix.libvips_version }}&IM-${{ matrix.image_magick_version }}]
     runs-on: ubuntu-latest
     continue-on-error: ${{ matrix.experimental }}
     strategy:
@@ -25,6 +25,7 @@ jobs:
         include:
           - ruby: '2.7'
             libvips_version: '8.7.4'
+            image_magick_version:  '7.0.10-23'
             experimental: true
 
     steps:
@@ -46,12 +47,12 @@ jobs:
       uses: actions/cache@v2
       with:
         path: ~/vips
-        key: ${{ runner.os }}-${{matrix.libvips_version}}-vips__im-${{ matrix.image_magick_version }}--${{ hashFiles('**/install-vips.sh') }}
-    - name: Setup ImageMagick 7
+        key: ${{ runner.os }}-${{matrix.libvips_version}}-vips___${{ matrix.image_magick_version }}-im__${{ hashFiles('**/install-vips.sh') }}
+    - name: Setup ImageMagick ${{ matrix.image_magick_version }}
       run: |
         export IMAGEMAGICK_VERSION=${{ matrix.image_magick_version }}
         ./install-imagemagick.sh
-    - name: Setup Libvips
+    - name: Setup Libvips ${{matrix.libvips_version}}
       run: |
         export LIBVIPS_VERSION=${{matrix.libvips_version}}
         bash install-vips.sh --without-python
