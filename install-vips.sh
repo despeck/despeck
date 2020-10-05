@@ -26,6 +26,6 @@ cd vips-$version
 echo 'Configuring'
 CXXFLAGS=-D_GLIBCXX_USE_CXX11_ABI=0 ./configure --prefix=$HOME/vips $* >/dev/null 2>&1
 echo 'Make'
-make >/dev/null 2>&1
+# make >/dev/null 2>&1
 echo 'Install'
-make install >/dev/null 2>&1
+# make install >/dev/null 2>&1
