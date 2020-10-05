@@ -20,7 +20,7 @@ jobs:
       matrix:
         ruby: [ '2.6', '2.5', '2.4' ]
         libvips_version: ['8.6.5', '8.7.4', '8.10.1']
-        image_magick_version: [ '7.0.10-23', '6.9.11-32']
+        image_magick_version: [ '7.0.10-23', '6.9.10-33']
         experimental: [false]
         include:
           - ruby: '2.7'
